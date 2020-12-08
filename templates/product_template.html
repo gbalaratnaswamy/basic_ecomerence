@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+    <div class="mx-5">
+        <h1 class="text-center">{{ title }}</h1>
+
+            <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel" style="background: silver">
+                <ol class="carousel-indicators">
+                     {% for name in image %}
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" {% if name == 'image1' %} class="active"{% endif %}></li>
+                    {% endfor %}
+                </ol>
+                <div class="carousel-inner py-3">
+                    {% for name,url in image.items %}
+                    <div class="carousel-item {% if name == 'image1' %}active{% endif %}">
+                        <img class="d-block mx-auto" alt="image" style="height:500px" src={{ url }} >
+                    </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+
+
+        <br>
+        <h5 class="text-center">Rs {{ price }}/-</h5>
+        <p style="font-size: large">{{ description|linebreaks }}</p>
+
+        <br>
+        <table class="table table-striped" class="container-sm" >
+
+            {% for row,col in table.items %}
+                <tr>
+                    <th>{{ row }}</th>
+                    <td>{{ col }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        {{ special_model|safe }}
+    </div>
+{% endblock %}
