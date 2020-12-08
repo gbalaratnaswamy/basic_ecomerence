@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}cart{% endblock %}
+{% block content %}
+    {% for item in cart %}
+        <img src=" {{ item.product.image.image1 }}" class="img-thumbnail" style="height: 100px;width:100px">
+        price:{% widthratio item.product.price 1 item.quantity %} quantity={{ item.quantity }}
+        <br>
+    {% endfor %}
+{% endblock %}

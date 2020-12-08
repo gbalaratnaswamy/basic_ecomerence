@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from cart.models import CartItem
 
 
 # Create your views here.
@@ -27,6 +28,8 @@ def signup_user(request):
     if request.method == "POST":
         user = User.objects.create_user(request.POST['userName'], request.POST['email'], request.POST['password'])
         user.save()
+        cart = CartItem(user=user, items={})
+        cart.save()
         login(request, user)
         return redirect("/")
     return render(request, "signup.html")

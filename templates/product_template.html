@@ -30,6 +30,8 @@
 
         <br>
         <h5 class="text-center">Rs {{ price }}/-</h5>
+    <form method="post">{% csrf_token %}
+    <input type="submit" value="add to cart"></form>
         <p style="font-size: large">{{ description|linebreaks }}</p>
 
         <br>

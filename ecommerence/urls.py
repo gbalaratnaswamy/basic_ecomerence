@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from product.views import product_view, create_product
 from user_auth.views import home, login_user, logout_user,signup_user,user_page
-
+from cart.views import cart_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/<p_id>', product_view),
@@ -26,5 +26,6 @@ urlpatterns = [
     path("login", login_user),
     path("logout", logout_user),
     path("signup",signup_user),
-    path("user",user_page)
+    path("user",user_page),
+    path("cart",cart_view)
 ]
