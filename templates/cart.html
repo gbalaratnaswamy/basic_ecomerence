@@ -1,9 +1,147 @@
 {% extends "base.html" %}
 {% block title %}cart{% endblock %}
+{% load extra_tags %}
 {% block content %}
-    {% for item in cart %}
-        <img src=" {{ item.product.image.image1 }}" class="img-thumbnail" style="height: 100px;width:100px">
-        price:{% widthratio item.product.price 1 item.quantity %} quantity={{ item.quantity }}
-        <br>
-    {% endfor %}
+    <script>
+        let price = {};
+        let quantity = {};
+        let no_products = false;
+    </script>
+    {% if cart.products.all|length == 0 %}
+        there are no products in cart
+        <script>no_products = true;
+        </script>
+
+
+    {% else %}
+        <div class="row">
+            {% for product in cart.products.all %}
+                <div class="col" id="col{{ product.id }}">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ product.image.image1 }}" class="card-img-top" alt="image" style="height: 250px">
+                        <div class="card-body text-center">
+                            <p class="my-0">price: Rs <span id="price{{ product.id }}"></span>/-</p>
+                            <p class="mt-0">quantity:
+                                <span id="span{{ product.id }}">{{ cart.items|getdict:product.id }}</span></p>
+                            <button type="button" class="btn btn-success mx-1"
+                                    onclick="add_to_cart({{ product.id }})">
+                                +
+                            </button>
+                            <button type="button" class="btn btn-danger mx-1"
+                                    onclick="decr_from_cart({{ product.id }})">-
+                            </button>
+                            <button type="button" class="btn btn-danger mx-1"
+                                    onclick="del_from_cart({{ product.id }})">del
+                            </button>
+
+                        </div>
+
+                        {#  <div class="card-body">#}
+                        {#    <h5 class="card-title">Card title</h5>#}
+                        {#    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>#}
+                        {#    <a href="#" class="btn btn-primary">Go somewhere</a>#}
+                        {#  </div>#}
+                    </div>
+                    <script>
+                        price["{{ product.id }}"] = {{ product.price }};
+                        quantity["{{ product.id }}"] = {{ cart.items|getdict:product.id }};
+                    </script>
+
+                    {#        <img id="img{{ product.id }}" src=" {{ product.image.image1 }}" class="img-thumbnail"#}
+                    {#             style="height: 100px;width:100px">#}
+                    {#        price:{% widthratio item.product.price 1 item.quantity %} quantity={{ item.items|getdict:i }}#}
+                    {#        <span id="span{{ product.id }}">{{ cart.items|getdict:product.id }}</span>#}
+                    {#        <button id="btni{{ product.id }}" type="button" class="btn btn-success" onclick="add_to_cart({{ product.id }})">#}
+                    {#            +#}
+                    {#        </button>#}
+                    {#        <button id="btnd{{ product.id }}" type="button" class="btn btn-danger"#}
+                    {#                onclick="decr_from_cart({{ product.id }})">-#}
+                    {#        </button>#}
+                    {#        <button id="btnde{{ product.id }}" type="button" class="btn btn-danger"#}
+                    {#                onclick="del_from_cart({{ product.id }})">del#}
+                    {#        </button>#}
+                    {#        <span id="price{{ product.id }}"></span>#}
+                    {#        <br>#}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <span id="total"></span>
+    <script>
+        function computecost() {
+            let total = 0
+            for (let i in price) {
+                total += price[i] * quantity[i]
+                document.getElementById("price" + i).innerText = price[i] * quantity[i];
+            }
+            if (!no_products) {
+                document.getElementById("total").innerText = "total price is: Rs" + total + "/-";
+            }
+
+        };
+
+        window.onload = function () {
+            computecost()
+
+        };
+
+        function decr_from_cart(p_id) {
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200 && this.responseText !== "failed") {
+                    if (this.responseText == "0") {
+                        document.getElementById("col" + p_id).remove()
+                        delete price[p_id]
+                        delete quantity[p_id]
+
+
+                    } else {
+
+
+                        document.getElementById("span" + p_id).innerText = this.responseText
+                        quantity[p_id] = parseInt(this.responseText)
+                    }
+                }
+                computecost()
+            };
+            xhttp.open("GET", window.location.href + "/dec/" + p_id, true);
+            xhttp.send();
+            console.log("send")
+        }
+
+        function del_from_cart(p_id) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200 && this.responseText !== "failed") {
+                    document.getElementById("col" + p_id).remove()
+                    delete price[p_id]
+                    delete quantity[p_id]
+                }
+                computecost()
+            };
+            xhttp.open("GET", window.location.href + "/del/" + p_id, true);
+            xhttp.send();
+            console.log("send")
+
+        }
+
+        function add_to_cart(p_id) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200 && this.responseText !== "failed") {
+                    if (this.responseText == "limited stock") {
+                        alert("not enough stock")
+                    } else {
+                        document.getElementById("span" + p_id).innerText = this.responseText
+                        quantity[p_id] = parseInt(this.responseText)
+                    }
+                }
+                computecost()
+            };
+            xhttp.open("GET", window.location.href + "/add/" + p_id, true);
+            xhttp.send();
+            console.log("send")
+        }
+    </script>
 {% endblock %}
