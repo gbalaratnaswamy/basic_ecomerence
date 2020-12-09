@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from cart.models import CartItem
-
+from django.db import IntegrityError
 
 # Create your views here.
 def login_user(request):
@@ -26,12 +26,15 @@ def signup_user(request):
     if request.user.is_authenticated:
         return redirect("/")
     if request.method == "POST":
-        user = User.objects.create_user(request.POST['userName'], request.POST['email'], request.POST['password'])
-        user.save()
-        cart = CartItem(user=user, items={})
-        cart.save()
-        login(request, user)
-        return redirect("/")
+        try:
+            user = User.objects.create_user(request.POST['userName'], request.POST['email'], request.POST['password'])
+            user.save()
+            cart = CartItem(user=user, items={})
+            cart.save()
+            login(request, user)
+            return redirect("/")
+        except IntegrityError:
+            return render(request,"signup.html",{"error":"User name Already exist try different name"})
     return render(request, "signup.html")
 
 

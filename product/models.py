@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -15,4 +16,5 @@ class Product(models.Model):
     rating_3 = models.IntegerField(default=0)
     rating_2 = models.IntegerField(default=0)
     rating_1 = models.IntegerField(default=0)
-    rating_avg = models.IntegerField(default=0)
+    rating_avg = models.DecimalField(max_digits=3, decimal_places=2, default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

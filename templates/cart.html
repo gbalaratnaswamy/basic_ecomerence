@@ -14,7 +14,7 @@
 
 
     {% else %}
-        <div class="row">
+        <div class="row mx-0">
             {% for product in cart.products.all %}
                 <div class="col" id="col{{ product.id }}">
                     <div class="card" style="width: 18rem;">
@@ -71,13 +71,13 @@
         function computecost() {
             let total = 0
             for (let i in price) {
-                total += price[i] * quantity[i]
-                document.getElementById("price" + i).innerText = price[i] * quantity[i];
+                total += parseInt((price[i] * quantity[i]).toFixed(2));
+
+                document.getElementById("price" + i).innerText = (price[i] * quantity[i]).toFixed(2);
             }
             if (!no_products) {
                 document.getElementById("total").innerText = "total price is: Rs" + total + "/-";
             }
-
         };
 
         window.onload = function () {
@@ -107,7 +107,6 @@
             };
             xhttp.open("GET", window.location.href + "/dec/" + p_id, true);
             xhttp.send();
-            console.log("send")
         }
 
         function del_from_cart(p_id) {
@@ -122,7 +121,6 @@
             };
             xhttp.open("GET", window.location.href + "/del/" + p_id, true);
             xhttp.send();
-            console.log("send")
 
         }
 
@@ -141,7 +139,6 @@
             };
             xhttp.open("GET", window.location.href + "/add/" + p_id, true);
             xhttp.send();
-            console.log("send")
         }
     </script>
 {% endblock %}

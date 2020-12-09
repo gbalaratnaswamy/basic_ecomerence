@@ -49,6 +49,14 @@
         {{ product.special_model|safe }}
     <p> avg review : {{ product.rating_avg }}</p>
     <p>total ratings: {{ product.rating_5|add:product.rating_4|add:product.rating_3|add:product.rating_2|add:product.rating_1 }}</p>
+    <p>
+        write review
+        <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="submit">
+    </form>
+
+    </p>
     </div>
     <script>
         function add_to_cart() {
