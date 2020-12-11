@@ -4,12 +4,14 @@ from django.contrib.auth import authenticate, login, logout
 from cart.models import CartItem
 from django.db import IntegrityError
 
+
 # Create your views here.
 def login_user(request):
     if request.user.is_authenticated:
         return redirect("/")
     if request.method == "POST":
         user = authenticate(username=request.POST["userName"], password=request.POST["password"])
+        print(user)
         if user is not None:
             login(request, user)
             return redirect("/")
@@ -34,21 +36,20 @@ def signup_user(request):
             login(request, user)
             return redirect("/")
         except IntegrityError:
-            return render(request,"signup.html",{"error":"User name Already exist try different name"})
+            return render(request, "signup.html", {"error": "User name Already exist try different name"})
     return render(request, "signup.html")
-
-
-
 
 
 def user_page(request):
     if request.user.is_authenticated:
         user = User.objects.filter(username=request.user).first()
         return render(request, "user_page.html", {"user": user})
-    return redirect("/")
+    return redirect("/login")
 
 
 def update_user_email(request):
+    if not request.user.is_authenticated:
+        return redirect("/login")
     user = User.objects.get(username=request.user)
     print(request.POST)
     user.email = request.POST["email"]
@@ -57,6 +58,8 @@ def update_user_email(request):
 
 
 def update_user_password(request):
+    if not request.user.is_authenticated:
+        return redirect("/login")
     user = User.objects.get(username=request.user)
     user.set_password(request.POST["password"])
     user.save()

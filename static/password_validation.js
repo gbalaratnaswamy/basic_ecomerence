@@ -1,6 +1,5 @@
 let pswd_field = document.getElementById("password")
 let conf_field = document.getElementById("conf_password")
-let error_field = document.getElementById("error_log")
 let len_field = document.getElementById("len")
 let lower_field = document.getElementById("lower")
 let upper_field = document.getElementById("upper")

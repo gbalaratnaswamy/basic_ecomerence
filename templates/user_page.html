@@ -104,13 +104,21 @@
                         {{ error|safe }}
                     </div>
                 {% endif %}
+                <p></p>
+                <div class="text-center m-3">
+                    <a href="orders" type="button" class="btn btn-info">view orders</a>
+                    <br>
+                </div>
+                <div class="text-center m-3">
+                    <a href="product/create" type="button" class="btn btn-info  ">sell product</a>
+                </div>
             </div>
             <div class="col-sm-3">
             </div>
         </div>
     </div>
     {% load static %}
-    <script src="{% static 'pass_valid.js' %}"></script>
+    <script src="{% static 'password_validation.js' %}"></script>
     {#    <script>#}
     {#        function changePlan(val) {#}
     {#            let plan_input = document.getElementById("planHolder")#}

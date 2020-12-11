@@ -3,16 +3,15 @@
 {% load extra_tags %}
 {% block content %}
     <script>
-        let price = {};
+        let products = {};
         let quantity = {};
         let no_products = false;
     </script>
     {% if cart.products.all|length == 0 %}
         there are no products in cart
-        <script>no_products = true;
+        <script>
+            no_products = true;
         </script>
-
-
     {% else %}
         <div class="row mx-0">
             {% for product in cart.products.all %}
@@ -35,7 +34,6 @@
                             </button>
 
                         </div>
-
                         {#  <div class="card-body">#}
                         {#    <h5 class="card-title">Card title</h5>#}
                         {#    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>#}
@@ -43,10 +41,9 @@
                         {#  </div>#}
                     </div>
                     <script>
-                        price["{{ product.id }}"] = {{ product.price }};
+                        products["{{ product.id }}"] = {{ product.price }};
                         quantity["{{ product.id }}"] = {{ cart.items|getdict:product.id }};
                     </script>
-
                     {#        <img id="img{{ product.id }}" src=" {{ product.image.image1 }}" class="img-thumbnail"#}
                     {#             style="height: 100px;width:100px">#}
                     {#        price:{% widthratio item.product.price 1 item.quantity %} quantity={{ item.items|getdict:i }}#}
@@ -65,34 +62,37 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="m-2"></div>
+        <p class="m-3">
+            <span id="total"></span>
+            <a href="/payment">
+                <button class="btn btn-primary">Checkout</button>
+            </a></p>
     {% endif %}
-    <span id="total"></span>
     <script>
-        function computecost() {
+        function compute_cost() {
             let total = 0
-            for (let i in price) {
-                total += parseInt((price[i] * quantity[i]).toFixed(2));
+            for (let product in products) {
+                total += parseFloat((products[product] * quantity[product]).toFixed(2));
 
-                document.getElementById("price" + i).innerText = (price[i] * quantity[i]).toFixed(2);
+                document.getElementById("price" + product).innerText = (products[product] * quantity[product]).toFixed(2);
             }
             if (!no_products) {
                 document.getElementById("total").innerText = "total price is: Rs" + total + "/-";
             }
-        };
-
+        }
         window.onload = function () {
-            computecost()
+            compute_cost()
 
         };
 
         function decr_from_cart(p_id) {
-
-            var xhttp = new XMLHttpRequest();
+            let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200 && this.responseText !== "failed") {
-                    if (this.responseText == "0") {
+                if (this.readyState === 4 && this.status === 200 && this.responseText !== "failed") {
+                    if (this.responseText === "0") {
                         document.getElementById("col" + p_id).remove()
-                        delete price[p_id]
+                        delete products[p_id]
                         delete quantity[p_id]
 
 
@@ -103,21 +103,21 @@
                         quantity[p_id] = parseInt(this.responseText)
                     }
                 }
-                computecost()
+                compute_cost()
             };
             xhttp.open("GET", window.location.href + "/dec/" + p_id, true);
             xhttp.send();
         }
 
         function del_from_cart(p_id) {
-            var xhttp = new XMLHttpRequest();
+            let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200 && this.responseText !== "failed") {
+                if (this.readyState === 4 && this.status === 200 && this.responseText !== "failed") {
                     document.getElementById("col" + p_id).remove()
-                    delete price[p_id]
+                    delete products[p_id]
                     delete quantity[p_id]
                 }
-                computecost()
+                compute_cost()
             };
             xhttp.open("GET", window.location.href + "/del/" + p_id, true);
             xhttp.send();
@@ -125,17 +125,17 @@
         }
 
         function add_to_cart(p_id) {
-            var xhttp = new XMLHttpRequest();
+            let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200 && this.responseText !== "failed") {
-                    if (this.responseText == "limited stock") {
+                if (this.readyState === 4 && this.status === 200 && this.responseText !== "failed") {
+                    if (this.responseText === "limited stock") {
                         alert("not enough stock")
                     } else {
                         document.getElementById("span" + p_id).innerText = this.responseText
                         quantity[p_id] = parseInt(this.responseText)
                     }
                 }
-                computecost()
+                compute_cost()
             };
             xhttp.open("GET", window.location.href + "/add/" + p_id, true);
             xhttp.send();

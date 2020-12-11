@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}welcome{% endblock %}
+{% block content %}
+    <div class="form container-fluid">
+        <div class="row">
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-6" style="background-color: rgb(248, 248, 248);">
+                <div class="p-3">
+                    {% if orders|length > 0 %}
+                        <div style="width:100%;overflow-x:auto;">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">item</th>
+                                    <th scope="col">date</th>
+                                    <th scope="col">quantity</th>
+                                    <th scope="col">cost</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for order in orders %}
+
+                                    <tr>
+                                        <td>{{ order.product.title }}</td>
+                                        <td>
+                                            {{ order.time }}
+                                        </td>
+                                        <td>
+                                            {{ order.no_of_items }}
+
+                                        </td>
+                                        <td>
+                                            {{ order.cost }}
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>you haven't ordered anything yet</p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-3">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

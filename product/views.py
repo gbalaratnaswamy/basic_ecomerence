@@ -3,7 +3,9 @@ from product.models import Product
 from .forms import ProductForm
 from cart.models import CartItem
 from reviews.forms import ReviewForm
+from reviews.models import ProductReview
 from django.contrib.auth.models import User
+from orders.models import OrderedItem
 import math
 
 
@@ -12,7 +14,24 @@ def product_view(request, p_id):
     temp = Product.objects.get(pk=p_id)
     form = ReviewForm(request.POST or None)
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect("/login")
         if form.is_valid():
+            try:
+                OrderedItem.objects.get(user=request.user, product=temp)
+            except OrderedItem.DoesNotExist:
+                return HttpResponse("you have not ordered item please order it to review")
+            except OrderedItem.MultipleObjectsReturned:
+                pass
+            review_given = True
+            try:
+                ProductReview.objects.get(user=request.user, product=temp)
+            except ProductReview.DoesNotExist:
+                review_given = False
+            except ProductReview.MultipleObjectsReturned:
+                pass
+            if review_given:
+                return HttpResponse("you have already submited review")
             form = form.save(commit=False)
             form.user = request.user
             form.product = temp
@@ -39,19 +58,24 @@ def product_view(request, p_id):
 
 
 def create_product(request):
+    if not request.user.is_authenticated:
+        return redirect("/login")
     form = ProductForm(request.POST or None)
     if form.is_valid():
-        form = form.save()
-        return redirect(f"http://127.0.0.1:8000/test/{form.id}")
-    return render(request, "create_product.html")
+        form = form.save(commit=False)
+        form.user = request.user
+        form.save()
+        return redirect(f"/product/view/{form.id}")
+    else:
+        print()
+        print(form.errors)
+    return render(request, "create_product.html", {"form": form})
 
 
 def product_add(request, p_id):
-    try:
-        cart = CartItem.objects.get(user=request.user)
-    except CartItem.DoesNotExist:
-        cart = CartItem(user=request.user)
-        cart.save()
+    if not request.user.is_authenticated:
+        return redirect("/login")
+    cart = CartItem.get_or_create(request.user)
     try:
         if p_id not in cart.items:
             cart.items.update({p_id: 1})
@@ -90,6 +114,7 @@ def change_product(request, p_id):
         if request.method == "POST":
             if form.is_valid():
                 form.save()
+
         return render(request, "product_edit.html", {"form": form})
     return HttpResponse("access denied")
 

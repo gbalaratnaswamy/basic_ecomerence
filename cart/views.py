@@ -6,16 +6,14 @@ from .models import CartItem
 def cart_view(request):
     if not request.user.is_authenticated:
         return redirect("/login")
-    try:
-        cart = CartItem.objects.get(user=request.user)
-    except CartItem.DoesNotExist:
-        cart = CartItem(user=request.user)
-        cart.save()
+    cart = CartItem.get_or_create(request.user)
     return render(request, "cart.html", {"cart": cart})
 
 
 def cart_increase(request, p_id):
-    cart = CartItem.objects.get(user=request.user)
+    if not request.user.is_authenticated:
+        return HttpResponse("not logged in")
+    cart = CartItem.get_or_create(request.user)
     try:
         if cart.items[p_id] >= cart.products.get(pk=p_id).stock:
             return HttpResponse("limited stock")
@@ -27,7 +25,9 @@ def cart_increase(request, p_id):
 
 
 def cart_decrease(request, p_id):
-    cart = CartItem.objects.get(user=request.user)
+    if not request.user.is_authenticated:
+        return HttpResponse("not logged in")
+    cart = CartItem.get_or_create(request.user)
     try:
         cart.items[p_id] -= 1
         cart.save()
@@ -42,7 +42,9 @@ def cart_decrease(request, p_id):
 
 
 def cart_delete(request, p_id):
-    cart = CartItem.objects.get(user=request.user)
+    if not request.user.is_authenticated:
+        return HttpResponse("not logged in")
+    cart = CartItem.get_or_create(request.user)
     try:
         cart.items.pop(p_id)
         cart.products.remove(p_id)
