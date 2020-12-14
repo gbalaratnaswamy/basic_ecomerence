@@ -81,7 +81,8 @@ function form_submit() {
         table_input.value = "{}"
 
     } else {
-        let table_items = table_text.split(/[\n ,]/);
+        table_text=table_text.replace(/\t/g,"")
+        let table_items = table_text.split(/[\n]/);
         table_text = "{"
         console.log(table_items)
         j = 0
@@ -148,8 +149,8 @@ function validate_description() {
         description_input.classList.add("is-invalid")
         return false
     }
-    if (description_input.value.length > 1000) {
-        document.getElementById("description_error").innerText = "description should be less than 1000 characters"
+    if (description_input.value.length > 10000) {
+        document.getElementById("description_error").innerText = "description should be less than 10000 characters"
         description_input.classList.add("is-invalid")
         return false
     }
