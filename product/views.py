@@ -67,7 +67,8 @@ def create_product(request):
         form.save()
         return redirect(f"/product/view/{form.id}")
     else:
-        print()
+        if request.method=="POST":
+            print(request.POST['image'])
         print(form.errors)
     return render(request, "create_product.html", {"form": form})
 
@@ -122,3 +123,7 @@ def change_product(request, p_id):
 def home(request):
     products = Product.objects.all()
     return render(request, "home.html", {"products": products})
+
+
+def test(request):
+    return render(request,'index.html',{})

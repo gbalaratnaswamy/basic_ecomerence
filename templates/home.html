@@ -7,12 +7,12 @@
 
             <div class="col my-2">
 
-                <div class="card mx-auto" style="width: 18rem;">
+                <div class="card mx-auto" style="width: 18rem;background: black; color: gold">
                     <a href="/product/view/{{ product.id }}" style="text-decoration: none">
                         <img src="{{ product.image.image1 }}" class="card-img-top" alt="image" style="height: 250px">
-                        <div class="card-body">
-                            <h5 class="card-title"> {{ product.title }}</h5>
-                            <p>price: Rs {{ product.price }}/-</p>
+                        <div class="card-body py-1" style="text-align: center">
+                            <h5 class="card-title my-0"style="font-size: xx-large;color: gold"> {{ product.title }}</h5>
+                            <p style="color: gold">Rs {{ product.price }}/-</p>
                             {#                        <a href="#" class="btn btn-primary">Go somewhere</a>#}
                         </div>
                     </a>

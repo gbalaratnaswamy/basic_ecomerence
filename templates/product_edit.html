@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}product{% endblock %}
 {% block content %}
     <div class="form container-fluid">
         <div class="row">
             <div class="col-sm-1">
             </div>
-            <div class="col-sm-10" style="background-color: rgb(248, 248, 248);">
+            <div class="col-sm-10" style="background-color: gold;">
                 <div class="p-3">
                     <form method="post" id="form">{% csrf_token %}
                         {{ form.as_p }}
-                        <button type="button" class="btn btn-primary" onclick="form_submit()">
+                        <button type="button" class="btn btn-primary" id="submit_button">
                             Change
                         </button>
                     </form>
@@ -17,29 +18,15 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function form_submit() {
-            let image_text = document.getElementById("id_image").value
-            let images = image_text.split(/["\n ,"]/)
-            image_text = "{"
-
-            for (let i = 0; i < images.length; i++) {
-                image_text += '"image' + (i + 1) + '":"' + images[i] + '",'
-            }
-            image_text = image_text.slice(0, image_text.length - 1) + "}"
-            document.getElementById("id_image").value = image_text
-            document.getElementById("form").submit()
+    <script src="{% static 'product_json_to_text.js' %}"></script>
+    <script src="{% static 'edit_product.js' %}"></script>
+    <style>
+        input {
+            font-size: x-large !important;
         }
 
-        window.onload = function () {
-            let image_text = document.getElementById("id_image").value
-            var images = JSON.parse(image_text);
-            image_text = ""
-            for (let image in images) {
-                image_text += images[image] + "\n"
-            }
-            document.getElementById("id_image").value = image_text
+        textarea {
+            font-size: x-large !important;
         }
-    </script>
+    </style>
 {% endblock %}

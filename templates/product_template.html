@@ -4,7 +4,7 @@
     <div class="mx-5" xmlns="http://www.w3.org/1999/html">
         <h1 class="text-center">{{ product.title }}</h1>
 
-        <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel" style="background: silver">
+        <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel" style="background: gold">
             <ol class="carousel-indicators">
                 {% for name in product.image %}
                     <li data-target="#carouselExampleIndicators" data-slide-to="0" {% if name == 'image1' %}
@@ -47,18 +47,66 @@
         </table>
         <br>
         {{ product.special_model|safe }}
-    <p> avg review : {{ product.rating_avg }}</p>
-    <p>total ratings: {{ product.rating_5|add:product.rating_4|add:product.rating_3|add:product.rating_2|add:product.rating_1 }}</p>
-    <p>
+        <div id="rating_block">
+            <p> avg review : <span style="color: #e2e2e2">
+            <span class="fa" id="ostar1"></span>
+            <span class="fa" id="ostar2"></span>
+            <span class="fa" id="ostar3"></span>
+            <span class="fa" id="ostar4"></span>
+            <span class="fa" id="ostar5"></span>
+        </span>
+            </p>
+            <p>total
+                ratings: {{ product.rating_5|add:product.rating_4|add:product.rating_3|add:product.rating_2|add:product.rating_1 }}
+            </p>
+        </div>
         write review
-        <form method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="submit">
-    </form>
+        <form method="post" id="form">{% csrf_token %}
+            <div class="rate" style="font-family: Arial">
+                <span>
+                <input type="radio" id="star1" class="give_rate" name="rate" value="1" onchange="check_stars()"
+                       required/>
+                <label id="lable1" for="star1" title="text"><span class="fa fa-star"></span></label>
+                </span>
+                <span>
+                <input type="radio" id="star2" class="give_rate" name="rate" value="2" onchange="check_stars()"
+                       required/>
+                <label id="lable2" for="star2" title="text"><span class="fa fa-star"></span></label>
+                </span>
+                <span>
+                <input type="radio" id="star3" class="give_rate" name="rate" value="3" onchange="check_stars()"
+                       required/>
+                <label id="lable3" for="star3" title="text"><span class="fa fa-star"></span></label>
+                </span>
+                <span>
+                <input type="radio" id="star4" class="give_rate" name="rate" value="4" onchange="check_stars()"
+                       required/>
+                    <label id="lable4" for="star4" title="text"><span class="fa fa-star"></span></label>
+                </span>
+                <span>
+                <input type="radio" id="star5" class="give_rate" name="rate" value="5" onchange="check_stars()"
+                       required/>
+                <label id="lable5" for="star5" title="text"><span class="fa fa-star"></span></label>
+                </span>
+            </div>
+            <br>
+            <br>
 
-    </p>
+
+            {{ form.as_p }}
+
+            <button type="button" class="btn btn-primary" onclick="submit_form()">Submit</button>
+
+
+        </form>
+
+
     </div>
+    {% load static %}
     <script>
+        let rating = {{ product.rating_avg }};
+        let total_ratings ={{ product.rating_5|add:product.rating_4|add:product.rating_3|add:product.rating_2|add:product.rating_1 }};
+
         function add_to_cart() {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
@@ -70,4 +118,50 @@
             xhttp.send();
         }
     </script>
+    <style>
+        .fill_star {
+            color: gold;
+        }
+
+
+        /* The container */
+        .rate {
+            float: left;
+            text-align: right;
+            cursor: pointer;
+            font-size: 22px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .rating > label {
+            color: #ddd;
+            float: right;
+        }
+
+        /* Hide the browser's default checkbox */
+        input[type=radio] {
+            color: silver;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        label {
+            cursor: pointer;
+        }
+
+        .rate input:checked ~ label {
+            color: gold;
+        }
+
+        .sudo_check {
+            color: gold;
+        }
+
+    </style>
+    <script src="{% static 'rating_stars.js' %}"></script>
 {% endblock %}

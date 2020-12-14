@@ -5,14 +5,11 @@ let description_input = document.getElementById("id_description")
 let price_input = document.getElementById("id_price")
 let special_input = document.getElementById("id_special_model")
 let submit_button = document.getElementById("submit_button")
-let is_title_valid = false
-let is_price_valid = false
-let is_description_valid = false
-let is_image_valid = false
 submit_button.addEventListener("click", function () {
     form_submit()
 })
-window.onload = function () {
+
+function setup() {
     let div = document.createElement("div");
     let node = document.createTextNode("title should not be empty");
     div.classList.add("invalid-feedback")
@@ -37,9 +34,8 @@ window.onload = function () {
     div.id = "price_error"
     div.appendChild(node);
     price_input.parentElement.appendChild(div)
-    image_input.value=""
-    table_input.value=""
 }
+
 title_input.addEventListener("keyup", function () {
     is_title_valid = validate_title()
 })
@@ -66,8 +62,14 @@ function form_submit() {
     } else {
         let images = image_text.split(/[\n ,]/)
         image_text = "{"
+        let j = 0
         for (let i = 0; i < images.length; i++) {
-            image_text += '"image' + (i + 1) + '":"' + images[i] + '",'
+            if (images[i] == "" || images[i] == " ") {
+                j += 1
+                continue
+            }
+
+            image_text += '"image' + (i + 1 - j) + '":"' + images[i] + '",'
         }
         image_text = image_text.slice(0, image_text.length - 1) + "}"
         image_input.value = image_text
@@ -82,17 +84,28 @@ function form_submit() {
         let table_items = table_text.split(/[\n ,]/);
         table_text = "{"
         console.log(table_items)
+        j = 0
         for (let i = 0; i < table_items.length; i++) {
+            if (table_items[i] == "" || table_items[i] == " ") {
+                j += 1
+                continue
+            }
             let value = table_items[i].split(":");
+            console.log(value)
             table_text += '"' + value[0] + '":"' + value[1] + '",';
         }
         table_text = table_text.slice(0, table_text.length - 1) + "}"
         table_input.value = table_text
     }
+
     document.getElementById("form").submit()
 }
 
 function form_validate() {
+    validate_image()
+    validate_description()
+    validate_price()
+    validate_title()
     if (is_price_valid && is_title_valid && is_description_valid && is_image_valid) {
         return true
     }
@@ -145,7 +158,7 @@ function validate_description() {
 }
 
 function validate_image() {
-    if (image_input.value == ""||image_input.value=="null") {
+    if (image_input.value == "" || image_input.value == "null") {
         document.getElementById("image_error").innerText = "image should not be empty"
         image_input.classList.add("is-invalid")
         return false
