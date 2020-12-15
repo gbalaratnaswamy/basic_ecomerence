@@ -7,7 +7,7 @@ def cart_view(request):
     if not request.user.is_authenticated:
         return redirect("/login")
     cart = CartItem.get_or_create(request.user)
-    return render(request, "cart.html", {"cart": cart})
+    return render(request, "cartnew.html", {"cart": cart})
 
 
 def cart_increase(request, p_id):

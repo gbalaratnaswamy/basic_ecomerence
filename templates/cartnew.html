@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}cart{% endblock %}
+{% load extra_tags %}
+{% block content %}
+    <script>
+        let products = {};
+        let quantity = {};
+        let no_products = false;
+    </script>
+    {% if cart.products.all|length == 0 %}
+        there are no products in cart
+        <script>
+            no_products = true;
+        </script>
+    {% else %}
+        {% for product in cart.products.all %}
+            <div style="display: flex;background: gold; align-content: center" class="row m-1 mb-2"
+                 id="row{{ product.id }}">
+                <div class="cartdiv">
+                    <img src="{{ product.image.image1 }}" class="m-2" alt="image"
+                         style="height: 200px; width: auto;float: left;">
+                </div>
+
+                <div class="col" style="align-content: center;display: inline-block; vertical-align: center;">
+                    <div style="display: inline-block">
+                        <br>
+                        <p style="display: inline-block">price: Rs <span id="price{{ product.id }}"></span>/-</p>
+                        <p style="display: inline-block">quantity:
+                            <span id="span{{ product.id }}">{{ cart.items|getdict:product.id }}</span></p>
+                        <br>
+                        <button type="button" class="btn btn-success mx-1"
+                                onclick="add_to_cart({{ product.id }})">
+                            +
+                        </button>
+                        <button type="button" class="btn btn-danger mx-1"
+                                onclick="decr_from_cart({{ product.id }})">-
+                        </button>
+                        <button type="button" class="btn btn-danger mx-1"
+                                onclick="del_from_cart({{ product.id }})">del
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                products["{{ product.id }}"] = {{ product.price }};
+                quantity["{{ product.id }}"] = {{ cart.items|getdict:product.id }};
+            </script>
+
+        {% endfor %}
+
+        <div class="m-2"></div>
+        <p class="m-3">
+            <span id="total"></span>
+            <a href="/payment" id="checkout">
+                <button class="btn btn-primary">Checkout</button>
+            </a></p>
+    {% endif %}
+    <style>
+        @media only screen and (min-width: 600px) {
+            .cartdiv {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 400px;
+
+            }
+        }
+
+        @media only screen and (max-width: 600px) {
+            .cartdiv {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 100%;
+
+            }
+        }
+    </style>
+    <script>
+        function compute_cost() {
+            let total = 0
+            if (Object.keys(products).length == 0&&no_products==false) {
+                document.getElementById("total").innerText = "there are no items in cart"
+                document.getElementById("checkout").hidden = true
+                return
+            }
+            for (let product in products) {
+                total += parseFloat((products[product] * quantity[product]).toFixed(2));
+
+                document.getElementById("price" + product).innerText = (products[product] * quantity[product]).toFixed(2);
+            }
+            if (!no_products) {
+                document.getElementById("total").innerText = "total price is: Rs" + total + "/-";
+            }
+        }
+
+        window.onload = function () {
+            compute_cost()
+
+        };
+
+        function decr_from_cart(p_id) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200 && this.responseText !== "failed") {
+                    if (this.responseText === "0") {
+                        document.getElementById("row" + p_id).remove()
+                        delete products[p_id]
+                        delete quantity[p_id]
+
+
+                    } else {
+
+
+                        document.getElementById("span" + p_id).innerText = this.responseText
+                        quantity[p_id] = parseInt(this.responseText)
+                    }
+                }
+                compute_cost()
+            };
+            xhttp.open("GET", window.location.href + "/dec/" + p_id, true);
+            xhttp.send();
+        }
+
+        function del_from_cart(p_id) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200 && this.responseText !== "failed") {
+                    document.getElementById("row" + p_id).remove()
+                    delete products[p_id]
+                    delete quantity[p_id]
+                }
+                compute_cost()
+            };
+            xhttp.open("GET", window.location.href + "/del/" + p_id, true);
+            xhttp.send();
+
+        }
+
+        function add_to_cart(p_id) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200 && this.responseText !== "failed") {
+                    if (this.responseText === "limited stock") {
+                        alert("not enough stock")
+                    } else {
+                        document.getElementById("span" + p_id).innerText = this.responseText
+                        quantity[p_id] = parseInt(this.responseText)
+                    }
+                }
+                compute_cost()
+            };
+            xhttp.open("GET", window.location.href + "/add/" + p_id, true);
+            xhttp.send();
+        }
+
+
+
+    </script>
+{% endblock %}
