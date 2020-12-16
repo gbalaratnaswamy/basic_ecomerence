@@ -12,9 +12,10 @@
                     <br>
                     <span id="price"></span>
                     <br>
-                    <a href="/checkout">
-                        <button class="btn btn-success">pay</button>
-                    </a>
+                <form class="form" action="/checkout" method="post">{% csrf_token %}
+                {{ form.as_p }}
+                    <button class="btn btn-success">pay</button>
+                </form>
                 </p>
             </div>
             <div class="col-sm-2"></div>

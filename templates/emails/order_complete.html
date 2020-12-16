@@ -1,0 +1,11 @@
+{% load extra_tags %}
+<h1 style="text-align: center">Thanks for purchasing</h1>
+<p>your order complete</p>
+{% for product in cart.products.all %}
+    <h3>{{ product.title }}</h3>
+    <img src="{{ product.image.image1 }}">
+    <p>No of items = {{ cart.items|getdict:product.id }},<br> unit quantity price is Rs:{{ product.price }}/-</p>
+{% endfor %}
+<br>
+<p>Total cost is Rs:{{ total_cost }}/-</p>
+<p>Thanks for purchasing have a nice day!</p>

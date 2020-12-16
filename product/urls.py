@@ -9,5 +9,5 @@ urlpatterns = [
     path("", home),
     path("product/change/<p_id>", change_product),
     path("test", test),
-    path("product/delete/<p_id>", delete_product)
+    path("product/delete/<p_id>", delete_product),
 ]

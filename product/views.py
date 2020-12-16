@@ -7,6 +7,8 @@ from reviews.forms import ReviewForm
 from reviews.models import ProductReview
 from django.contrib.auth.models import User
 from orders.models import OrderedItem
+from django.conf import settings
+from django.core.mail import send_mail
 import math
 
 
@@ -136,4 +138,10 @@ def home(request):
 
 
 def test(request):
-    return render(request, 'index.html', {})
+    user = request.user
+    subject = 'welcome to GFG world'
+    message = f'Hi {user.username}, thank you.'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [user.email, ]
+    send_mail(subject, message, email_from, recipient_list)
+    return HttpResponse("success")
