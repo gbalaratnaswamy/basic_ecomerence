@@ -11,11 +11,6 @@ for (let i = 1; i < 6; i++) {
     }
     document.getElementById("ostar" + i).classList.add("fa-star")
 }
-let star1 = document.getElementById("star1")
-let star2 = document.getElementById("star2")
-let star3 = document.getElementById("star3")
-let star4 = document.getElementById("star4")
-let star5 = document.getElementById("star5")
 
 
 function check_stars() {
@@ -43,7 +38,9 @@ function submit_form() {
 }
 
 window.onload = function () {
-    document.getElementById("id_rating").parentElement.hidden = true;
-    if(total_ratings==0){
-    document.getElementById("rating_block").innerHTML="<p>no reviews</p>"}
+    if (document.getElementById("id_rating") != null)
+        document.getElementById("id_rating").parentElement.hidden = true;
+    if (total_ratings == 0) {
+        document.getElementById("rating_block").innerHTML = "<p>no reviews</p>"
+    }
 }

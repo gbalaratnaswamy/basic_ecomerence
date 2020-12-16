@@ -81,7 +81,7 @@
             if (Object.keys(products).length == 0&&no_products==false) {
                 document.getElementById("total").innerText = "there are no items in cart"
                 document.getElementById("checkout").hidden = true
-                return
+                returna
             }
             for (let product in products) {
                 total += parseFloat((products[product] * quantity[product]).toFixed(2));

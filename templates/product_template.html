@@ -60,49 +60,90 @@
                 ratings: {{ product.rating_5|add:product.rating_4|add:product.rating_3|add:product.rating_2|add:product.rating_1 }}
             </p>
         </div>
-        write review
-        <form method="post" id="form">{% csrf_token %}
-            <div class="rate" style="font-family: Arial">
+        {% if is_seller == True %}
+            <a href="/product/change/{{ product.id }}">
+                <button class="btn btn-primary">Change product</button>
+            </a>
+
+            <button class="btn btn-danger" onclick="delete_product()">delete product</button>
+            <div class="modal" tabindex="-1" id="modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete item</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <a href="/product/delete/{{ product.id }}">
+                                <button type="button" class="btn btn-danger" onclick="delete_conform()" id="copy">
+                                    Confirm
+                                </button>
+                            </a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                            {#                    <button type="button" class="btn btn-primary">Save changes</button>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function delete_product() {
+
+                    $("#modal").modal("show")
+
+
+                }
+            </script>
+
+        {% else %}
+            write review
+            <form method="post" id="form">{% csrf_token %}
+                <div class="rate" style="font-family: Arial">
                 <span>
                 <input type="radio" id="star1" class="give_rate" name="rate" value="1" onchange="check_stars()"
                        required/>
                 <label id="lable1" for="star1" title="text"><span class="fa fa-star"></span></label>
                 </span>
-                <span>
+                    <span>
                 <input type="radio" id="star2" class="give_rate" name="rate" value="2" onchange="check_stars()"
                        required/>
                 <label id="lable2" for="star2" title="text"><span class="fa fa-star"></span></label>
                 </span>
-                <span>
+                    <span>
                 <input type="radio" id="star3" class="give_rate" name="rate" value="3" onchange="check_stars()"
                        required/>
                 <label id="lable3" for="star3" title="text"><span class="fa fa-star"></span></label>
                 </span>
-                <span>
+                    <span>
                 <input type="radio" id="star4" class="give_rate" name="rate" value="4" onchange="check_stars()"
                        required/>
                     <label id="lable4" for="star4" title="text"><span class="fa fa-star"></span></label>
                 </span>
-                <span>
+                    <span>
                 <input type="radio" id="star5" class="give_rate" name="rate" value="5" onchange="check_stars()"
                        required/>
                 <label id="lable5" for="star5" title="text"><span class="fa fa-star"></span></label>
                 </span>
-            </div>
-            <br>
-            <br>
-
-
-            {{ form.as_p }}
-
-            <button type="button" class="btn btn-primary" onclick="submit_form()">Submit</button>
-
-
-        </form>
-
+                </div>
+                <br>
+                <br>
+                {{ form.as_p }}
+                <button type="button" class="btn btn-primary" onclick="submit_form()">Submit</button>
+            </form>
+        {% endif %}
 
     </div>
     {% load static %}
+    {% if is_seller == False %}
+
+    {% endif %}
     <script>
         let rating = {{ product.rating_avg }};
         let total_ratings ={{ product.rating_5|add:product.rating_4|add:product.rating_3|add:product.rating_2|add:product.rating_1 }};
@@ -163,5 +204,7 @@
         }
 
     </style>
-    <script src="{% static 'rating_stars.js' %}"></script>
+    <script src="{% static 'rating_stars.js' %}">
+    </script>
+
 {% endblock %}

@@ -18,3 +18,4 @@ class Product(models.Model):
     rating_1 = models.IntegerField(default=0)
     rating_avg = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)

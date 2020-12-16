@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import HttpResponseNotFound, HttpResponseNotAllowed
 from product.models import Product
 from .forms import ProductForm
 from cart.models import CartItem
@@ -11,7 +12,12 @@ import math
 
 # Create your views here.
 def product_view(request, p_id):
-    temp = Product.objects.get(pk=p_id)
+    try:
+        temp = Product.objects.get(pk=p_id)
+    except Product.DoesNotExist:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+    if not temp.is_active:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
     form = ReviewForm(request.POST or None)
     if request.method == "POST":
         if not request.user.is_authenticated:
@@ -20,7 +26,7 @@ def product_view(request, p_id):
             try:
                 OrderedItem.objects.get(user=request.user, product=temp)
             except OrderedItem.DoesNotExist:
-                return HttpResponse("you have not ordered item please order it to review")
+                return HttpResponseNotAllowed("you have not ordered item please order it to review")
             except OrderedItem.MultipleObjectsReturned:
                 pass
             review_given = True
@@ -31,7 +37,7 @@ def product_view(request, p_id):
             except ProductReview.MultipleObjectsReturned:
                 pass
             if review_given:
-                return HttpResponse("you have already submited review")
+                return HttpResponseNotAllowed("you have already submited review")
             form = form.save(commit=False)
             form.user = request.user
             form.product = temp
@@ -53,8 +59,10 @@ def product_view(request, p_id):
             form.save()
             temp.save()
             form = ReviewForm()
+    product_user = temp.user
+    is_seller = product_user.username == request.user.username
     return render(request, "product_template.html",
-                  {"product": temp, "form": form})
+                  {"product": temp, "form": form, "is_seller": is_seller})
 
 
 def create_product(request):
@@ -67,7 +75,7 @@ def create_product(request):
         form.save()
         return redirect(f"/product/view/{form.id}")
     else:
-        if request.method=="POST":
+        if request.method == "POST":
             print(request.POST['image'])
         print(form.errors)
     return render(request, "create_product.html", {"form": form})
@@ -89,20 +97,20 @@ def product_add(request, p_id):
     return HttpResponse("added")
 
 
-def change_product_title(request):
-    pass
-
-
-def change_product_description(request):
-    pass
-
-
-def change_product_price(request):
-    pass
-
-
-def change_product_table(request):
-    pass
+def delete_product(request, p_id):
+    if not request.user.is_authenticated:
+        return redirect("/login")
+    product = Product.objects.get(pk=p_id)
+    product_user = product.user
+    if product_user.username == request.user.username:
+        product.is_active = False
+        product.save()
+        for item in product.cartitem_set.all():
+            item.products.remove(product)
+            item.items.pop(product.id)
+            item.save()
+        return HttpResponse("deleted successfully")
+    return HttpResponseNotAllowed("access denied")
 
 
 def change_product(request, p_id):
@@ -117,13 +125,13 @@ def change_product(request, p_id):
                 form.save()
 
         return render(request, "product_edit.html", {"form": form})
-    return HttpResponse("access denied")
+    return HttpResponseNotAllowed("access denied")
 
 
 def home(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(is_active=True)
     return render(request, "home.html", {"products": products})
 
 
 def test(request):
-    return render(request,'index.html',{})
+    return render(request, 'index.html', {})
