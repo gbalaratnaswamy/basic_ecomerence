@@ -98,6 +98,8 @@ def product_add(request, p_id):
 
 
 def delete_product(request, p_id):
+    if request.method == "GET":
+        return HttpResponseNotAllowed("Request not allowed")
     if not request.user.is_authenticated:
         return redirect("/login")
     product = Product.objects.get(pk=p_id)

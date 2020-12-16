@@ -81,14 +81,12 @@
                         </div>
 
                         <div class="modal-footer">
-                            <a href="/product/delete/{{ product.id }}">
-                                <button type="button" class="btn btn-danger" onclick="delete_conform()" id="copy">
-                                    Confirm
-                                </button>
-                            </a>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
-                            {#                    <button type="button" class="btn btn-primary">Save changes</button>#}
+                            <form action="/product/delete/{{ product.id }}" method="post"
+                                  id="delete_form">{% csrf_token %}
+                                <input type="submit" class="btn btn-danger" value="delete">
+                            </form>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -97,9 +95,8 @@
                 function delete_product() {
 
                     $("#modal").modal("show")
-
-
                 }
+
             </script>
 
         {% else %}
