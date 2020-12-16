@@ -2,3 +2,5 @@
 /db.sqlite3
 .idea
 *.sqlite3
+ecommerence/secret_config.py
+/ecommerence/secret_config.py

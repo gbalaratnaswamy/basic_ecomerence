@@ -13,7 +13,8 @@
                     <span id="price"></span>
                     <br>
                 <form class="form" action="/checkout" method="post">{% csrf_token %}
-                {{ form.as_p }}
+                    {{ form.as_p }}
+                    <input value="{{ order_id }}" hidden name="order_id">
                     <button class="btn btn-success">pay</button>
                 </form>
                 </p>

@@ -16,3 +16,10 @@ class OrderedItem(models.Model):
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=payment_methods, default='CARD')
     is_payment_complete = models.BooleanField(default=False)
+
+
+class OrderSet(models.Model):
+    order_items = models.ManyToManyField(OrderedItem)
+    time = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=20, choices=payment_methods, default='CARD')
+    is_payment_complete = models.BooleanField(default=False)
