@@ -40,7 +40,7 @@ def start_payment(request):
         request.session['total_cost'] = str(total_cost)
         order_set.save()
         request.session['order_id'] = order_set.id
-        form = OrderForm(request.POST or None)
+    form = OrderForm(None)
     return render(request, "payment.html", {"cart": cart, "form": form, "order_id": order_set.id})
 
 

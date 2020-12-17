@@ -12,7 +12,7 @@
                     <br>
                     <span id="price"></span>
                     <br>
-                <form class="form" action="/checkout" method="post">{% csrf_token %}
+                <form class="form" action="/checkout" method="post" id="payment_form">{% csrf_token %}
                     {{ form.as_p }}
                     <input value="{{ order_id }}" hidden name="order_id">
                     <button class="btn btn-success">pay</button>
@@ -38,6 +38,7 @@
             }
             if (noofitems === 0) {
                 document.getElementById("text").innerText = "No items in your cart";
+                document.getElementById("payment_form").hidden = true;
                 return
             }
             document.getElementById("noofitems").innerText = noofitems
