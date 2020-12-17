@@ -23,6 +23,11 @@ def start_payment(request):
     order_set.save()
     for product in cart.products.all():
         no_of_items = cart.items[f"{product.id}"]
+        if not product.stock >= int(no_of_items):
+            cart.products.remove(product)
+            cart.items.pop(f"{product.id}")
+            cart.save()
+            continue
         subtotal = no_of_items * product.price
         order = OrderedItem(user=request.user, product=product, no_of_items=no_of_items,
                             cost=subtotal)
@@ -30,11 +35,12 @@ def start_payment(request):
         order_items.append(order.id)
         order_set.order_items.add(order)
         total_cost += subtotal
-    request.session['orders'] = order_items
-    request.session['total_cost'] = str(total_cost)
-    order_set.save()
-    request.session['order_id'] = order_set.id
-    form = OrderForm(request.POST or None)
+    if total_cost > 0:
+        request.session['orders'] = order_items
+        request.session['total_cost'] = str(total_cost)
+        order_set.save()
+        request.session['order_id'] = order_set.id
+        form = OrderForm(request.POST or None)
     return render(request, "payment.html", {"cart": cart, "form": form, "order_id": order_set.id})
 
 
@@ -60,6 +66,9 @@ def checkout(request):
     for order_id in order_items:
         order = OrderedItem.objects.get(id=order_id)
         order.is_payment_complete = True
+        product = order.product
+        product.stock -= order.no_of_items
+        product.save()
         order.payment_method = payment_method
         order.save()
     order_set.is_payment_complete = True
