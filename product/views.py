@@ -138,10 +138,13 @@ def home(request):
 
 
 def test(request):
-    user = request.user
-    subject = 'welcome to GFG world'
-    message = f'Hi {user.username}, thank you.'
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [user.email, ]
-    send_mail(subject, message, email_from, recipient_list)
-    return HttpResponse("success")
+    # user = request.user
+    # subject = 'welcome to GFG world'
+    # message = f'Hi {user.username}, thank you.'
+    # email_from = settings.EMAIL_HOST_USER
+    # recipient_list = [user.email, ]
+    # send_mail(subject, message, email_from, recipient_list)
+    # return HttpResponse("success")
+    cart = CartItem.objects.get(user=request.user)
+    return render(request, 'emails/order_complete.html',
+                  {"username": 'gbala', 'cart': cart, "total_cost": 100, "total_items": 10})
