@@ -74,8 +74,8 @@ def checkout(request):
         cart.items = {}
         cart.products.clear()
         cart.save()
-        email = EmailMultiAlternatives('Purchase complete', text_content)
-        email.attach_alternative(html_content, "text/html")
-        email.to = [user.email]
-        email.send()
+        # email = EmailMultiAlternatives('Purchase complete', text_content)
+        # email.attach_alternative(html_content, "text/html")
+        # email.to = [user.email]
+        # email.send()
     return HttpResponse("success")
